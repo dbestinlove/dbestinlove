@@ -1,10 +1,65 @@
 # DEEPSEEK_REQUIREMENTS.md
 
-**Status: fully satisfied.** Every item in this document — including the one that was not an install — is now in place. The vision toolkit arrived, so the agent can see images (§4).
+> **⚠️ Superseded as a description of the current environment — 2026-09-24.**
+> Everything below was written for a `danger-full-access` container that had
+> passwordless `sudo`, a writable `$HOME`, and a full toolchain (Ruby, Jekyll,
+> ImageMagick, Chromium, the `vision-skills` toolkit). **None of that holds now.**
+> The sandbox is back to `workspace-write`, `sudo` is blocked again (*"The 'no new
+> privileges' flag is set"*, `/etc/sudo.conf` owned by uid 65534), `$HOME` is
+> read-only, and there is no system Ruby, ImageMagick or headless Chromium.
+>
+> What works today: a workspace-local **Ruby 3.3.8 + RubyGems 3.5.22 + Bundler
+> 2.5.22** in the gitignored `.tools/ruby/`, built without root by extracting
+> Debian debs with `dpkg-deb -x`. Run `source .tools/ruby/env.sh` before
+> `bundle install` / `bundle exec jekyll build`. `node`/`npm` exist. See
+> `HANDOFF.md` gotcha 5. Note `.tools/` is gitignored, so a fresh clone has to
+> rebuild the toolchain from scratch.
+>
+> Read the rest of this file as a **historical record and a rebuild recipe** —
+> the package list and §3's locked-down-sandbox workarounds are still useful.
+> Treat the status claims below as history, not as current fact.
 
-This file started as a request for help, because the agent could not install its own packages. That constraint is gone. It is now a **record of the environment and a recipe to rebuild it**, which is what makes it worth keeping.
+This file started as a request for help, because the agent could not install its own packages. It is now a **record of the environment and a recipe to rebuild it**, which is what makes it worth keeping.
 
-Environment: Debian 13 (trixie), aarch64, user `dbest1`, passwordless `sudo` available.
+Environment: Debian 13 (trixie), aarch64, user `dbest`.
+
+---
+
+## 0a. Rebuild recipe — rootless Ruby (current)
+
+Verified working on 2026-09-24. `apt-get download` needs no root; `dpkg-deb -x` unpacks
+into the repo; `.tools/` is gitignored so none of it is committed.
+
+```bash
+cd "/home/dbest/Plus One Project/dbestinlove"
+mkdir -p .tools/ruby/debs .tools/ruby/root
+cd .tools/ruby/debs
+apt-get download ruby3.3 libruby3.3 ruby3.3-dev ruby-rubygems rubygems-integration
+cd ..
+for d in debs/*.deb; do dpkg-deb -x "$d" root; done
+# the extracted scripts shebang /usr/bin/ruby3.3, which needs root to create
+sed -i '1s|^#!/usr/bin/ruby3\.3$|#!/usr/bin/env ruby|' root/usr/bin/*
+```
+
+Then create `.tools/ruby/bin/` wrappers (`ruby`, `ruby3.3` → alias of `ruby`, `gem`,
+`bundle`, `bundler`) that each export `LD_LIBRARY_PATH="$RUBY_ROOT/root/usr/lib/aarch64-linux-gnu"`
+and `RUBYLIB` covering `root/usr/lib/ruby/3.3.0`, `root/usr/lib/ruby/vendor_ruby`,
+`root/usr/lib/aarch64-linux-gnu/ruby/3.3.0` and `.../ruby/vendor_ruby`, then exec
+`ruby3.3` with the matching `gem3.3`/`bundle3.3` script. Finish with an `env.sh` that
+prepends `bin/` to `PATH` and sets a repo-local `GEM_HOME`.
+
+Three traps, all hit during setup:
+
+- The interpreter is compiled with `prefix=/usr`, so its built-in `$LOAD_PATH` misses the
+  extracted stdlib — **`RUBYLIB` is mandatory**, or `require "rubygems"` fails outright.
+- The `gem`/`bundle` scripts shebang `/usr/bin/ruby3.3`, which cannot be created without
+  root; repoint them to `#!/usr/bin/env ruby`.
+- Gem-installed executables are written with `#!/usr/bin/env ruby3.3`, so the wrapper dir
+  needs a `ruby3.3` alias too, or `bundle exec jekyll` dies with
+  `env: 'ruby3.3': No such file or directory`.
+
+Bundler also warns *"`/home/dbest` is not writable"* on every run and falls back to a
+`/tmp` home. Cosmetic; the build is unaffected.
 
 ---
 

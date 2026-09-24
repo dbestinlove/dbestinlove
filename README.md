@@ -23,14 +23,17 @@ A Jekyll site deployed to GitHub Pages by Actions on every push to `main`. Build
 
 ## Run locally
 
-Requires Ruby 3.x.
+Requires Ruby 3.x. **This machine has no system Ruby and `sudo` is blocked**, so a workspace-local Ruby 3.3.8 lives in the gitignored `.tools/ruby/`. Activate it first:
 
 ```bash
+source .tools/ruby/env.sh   # puts ruby/gem/bundle on PATH, sets GEM_HOME
 bundle install
 bundle exec jekyll serve --baseurl ""
 ```
 
 Then open <http://127.0.0.1:4000>. The empty `--baseurl` is required — without it every asset 404s on localhost.
+
+> `.tools/` is gitignored, so a fresh clone has no toolchain and has to rebuild it — see `DEEPSEEK_REQUIREMENTS.md`. Without `source .tools/ruby/env.sh`, `bundle` and `gem` are simply not on `PATH`.
 
 ## Deploy
 
@@ -49,7 +52,9 @@ gh run watch
 
 ## Not done yet
 
-No social share image, no photo above the fold, no sitemap, no 404 page. All of it, with priorities and specifics, is in `HANDOFF.md`.
+Still outstanding: a sitemap (`jekyll-sitemap` plugin) and a `404.md` page.
+
+Shipped since the v3 handoff: the hero photo and the social share card (`og:image` plus `twitter:card: summary_large_image`). The hero is still a stand-in image — ink in water, not a photo of the couple — so swapping in a real photo remains open. Priorities and specifics are in `HANDOFF.md`.
 
 ## Note
 

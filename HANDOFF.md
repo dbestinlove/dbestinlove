@@ -28,7 +28,6 @@
 - **Hero photo is a placeholder.** The current hero/og image is a photo of red and blue ink merging in water — chosen deliberately for the moment (it echoes the site's flag-merge palette) but it is **not a photo of the two people in the story**. The original P0 problem HANDOFF v3 raised — "the site has no faces" — is still technically true. Swap in a real photo of the couple when one is ready: replace `assets/img/hero-1400.jpg`, `hero-700.jpg`, and `og.jpg` (same filenames, same dimensions — 1400×764, 700×382, 1200×630 — keeps `index.md` and `_config.yml` untouched), recompress the same way (`convert -strip -interlace Plane -resize <W>x -quality 78`), and update the `alt` text in `index.md` to describe the actual photo instead of the ink swirl.
 - **Hero-photo crop: RESOLVED — it was never broken.** Measured the deployed page with headless Chromium at 400 / 768 / 900 / 1400 / 1920px (setup in `DEEPSEEK_REQUIREMENTS.md` §1). At every width the `.hero__photo` container spans the full viewport (`x: 0`, `width == innerWidth`), horizontal overflow is **0**, and `document.scrollWidth == innerWidth`, so there is no horizontal scrollbar either. `object-fit: cover` overflows on the **vertical** axis only — 18px at 400w rising to 668px at 1920w — which is exactly the intended behaviour: full width, trimmed top and bottom. The full-bleed margin box also equals the wrap's content width at every breakpoint, so it centres correctly. **The deployed site renders as intended.** The screenshot that prompted this was stale cache or taken before the push; a "narrow vertical strip losing the sides" is not producible by this CSS, since only a container narrower than the viewport would crop horizontally. Note the `46vw → 34vw` hedge was a no-op for that symptom — both values clamp to the 380px max at ≥1118px — and merely shortens the image between ~826–1118px. Screenshots are in `.tools/shots/` for a human to eyeball; the agent cannot view images (see gotcha 5).
 - **Social card: verified at the tag level, not yet in a real client.** `og:image` and `twitter:card: summary_large_image` are confirmed in the deployed HTML, and the image returns HTTP 200 as a 1200×630 JPEG — which is everything a crawler needs. One end-to-end test is still worth doing: paste the live URL into a chat client, since that exercises the crawler rather than the markup.
-- **Old unused `assets/img/hero.jpg`** (604 KB, the original untouched upload) is superseded by `hero-1400.jpg`/`hero-700.jpg` and should be deleted from the repo.
 - **Sitemap** (`jekyll-sitemap` plugin) and a **404.md** page — independent, no blockers, just not done yet.
 
 ### Blocked on video content existing
@@ -56,9 +55,18 @@ This is the trigger condition the site owner set: once the first few videos are 
 2. **`url` in `_config.yml` must not include `baseurl`.** `url: "https://dbestinlove.github.io"` + `baseurl: "/dbestinlove"`. Doubling the path breaks every canonical tag and share preview. This was live once.
 3. **Never add an `index.html`.** GitHub Pages serves it before `index.md`, silently hiding the whole site. This was the original v1 bug.
 4. **Check `git status -sb` before pushing.** `main` has diverged before. `git reset --soft origin/main` then commit is the safe recovery — never `git push --force`.
-5. **The agent environment has Ruby, Jekyll, a headless browser, ImageMagick, and now *vision*.** Build and preview with the repo's own documented commands (`bundle install`, then `bundle exec jekyll serve --baseurl ""`) — both work with no env vars or workarounds. It can also measure or screenshot the deployed page at any width and *see* the result through the `vision-skills` toolkit. Full setup and the rebuild recipe are in `DEEPSEEK_REQUIREMENTS.md`. Visual judgement no longer has to route through a human — but for pixel-exact facts (colours, offsets, small diffs) use `vision_dominant_colors` / `vision_trace` / `vision_pixel_diff`, never a model's prose description.
+5. **There is no system Ruby here, and `sudo` is blocked.** Build and preview through the workspace-local Ruby 3.3.8 in the gitignored `.tools/ruby/` — Debian debs extracted with `dpkg-deb -x`, because `sudo` needs root and `$HOME` is read-only. Activate it before anything else:
+
+   ```bash
+   source .tools/ruby/env.sh
+   bundle install
+   bundle exec jekyll serve --baseurl ""
+   ```
+
+   Without that `source`, `ruby`/`gem`/`bundle` are not on `PATH` at all. **`.tools/` is gitignored, so a fresh clone has no toolchain** — the rebuild recipe is in `DEEPSEEK_REQUIREMENTS.md`. ImageMagick, Chromium and the old `vision-skills` toolkit are all gone too; only `node`/`npm` remain, so any pixel-exact measurement needs those reinstalled first.
 6. **Title and description come from `_config.yml`. The share image does NOT.** `jekyll-seo-tag` resolves `image` through its `ImageDrop`, which reads `page["image"]` and only that — its four documented sources are `image`, `image.path`, `image.facebook`, `image.twitter`, all page-level. There is **no `site.image` fallback**. A top-level `image:` key in `_config.yml` is silently ignored: no error, no `og:image`, and `twitter:card` degrades from `summary_large_image` to `summary`. Set it via `_config.yml` `defaults:` (which populates front matter) or in the page's own front matter. This cost a full P0 cycle.
 7. **New:** when changing anything in `assets/img/`, keep filenames stable (`hero-1400.jpg`, `hero-700.jpg`, `og.jpg`) so `index.md` and `_config.yml` never need touching for an image swap — just overwrite the files.
+8. **Local builds use Jekyll 4.4.1; GitHub Actions uses Jekyll 3.10.0.** The repo's `Gemfile` pins `jekyll ~> 4.3`, but `actions/jekyll-build-pages@v1` ignores it and builds with the `github-pages` gem environment (Jekyll 3.10.0, jekyll-seo-tag 2.8.0). Confirmed by diffing a local `_site/index.html` against the deployed page: identical apart from version strings and two cosmetic SEO differences — 2.9.0 additionally emits `twitter:description`, and writes `name="twitter:image"` where 2.8.0 writes `property="twitter:image"`. Harmless, but a local preview is **not** a byte-exact replica of production, so don't chase SEO-tag diffs that exist only locally.
 
 ---
 
@@ -80,7 +88,7 @@ This is the trigger condition the site owner set: once the first few videos are 
 - [x] Hero photo crop confirmed correct — measured at five viewport widths: full width, vertical-only crop, no horizontal overflow
 - [x] Social card live — `og:image` emitted and `twitter:card` is `summary_large_image` (verified in the deployed HTML)
 - [ ] Social card confirmed end-to-end in a real link-preview test
-- [ ] Old unused `assets/img/hero.jpg` removed from the repo
+- [x] Old unused `assets/img/hero.jpg` removed from the repo
 - [ ] Sitemap and 404 page in place
 - [ ] Story chronology added once the first video is live
 - [ ] Real photo of the couple in place, if/when available, replacing the ink-swirl stand-in
