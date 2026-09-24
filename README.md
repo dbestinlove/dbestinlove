@@ -2,7 +2,7 @@
 
 **A 10-year long-distance love story, told out loud.**
 
-Live at **https://dbest180.github.io/dbestinlove/**
+Live at **https://dbestinlove.github.io/dbestinlove/**
 
 A Jekyll site deployed to GitHub Pages by Actions on every push to `main`. Builds take about 50 seconds.
 
@@ -43,7 +43,7 @@ gh run watch
 ## House rules
 
 - **Never add an `index.html`.** GitHub Pages serves it *before* `index.md`, which hides the whole site with no error anywhere. This was the original v1 bug.
-- **`_config.yml`'s `url` must not include `baseurl`.** `url: https://dbest180.github.io` + `baseurl: /dbestinlove`. Doubling the path breaks every canonical tag and share preview.
+- **`_config.yml`'s `url` must not include `baseurl`.** `url: https://dbestinlove.github.io` + `baseurl: /dbestinlove`. Doubling the path breaks every canonical tag and share preview.
 - **Markdown inside HTML blocks is not parsed.** kramdown defaults to `parse_block_html: false`, so inside `<section>` or `<div>` you must write real `<p>` tags. That's why the story copy in `index.md` looks like HTML.
 - **Don't force-push `main`.** It has diverged once already. See `HANDOFF.md` for the safe recovery move.
 

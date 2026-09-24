@@ -1,7 +1,7 @@
 # HANDOFF — DBest In Love (v3.4)
 
-**Repo:** `dbest180/dbestinlove`
-**Live URL:** https://dbest180.github.io/dbestinlove/
+**Repo:** `dbestinlove/dbestinlove`
+**Live URL:** https://dbestinlove.github.io/dbestinlove/
 **Stack:** Jekyll → GitHub Pages via Actions (`actions/jekyll-build-pages@v1`)
 **v3.4 status:** Every P0 and P1 item from v3 is implemented. What's left is either quick/independent (P2/P3) or genuinely blocked on video content existing. Only TikTok is live; Instagram/YouTube don't exist yet and nothing should reference them until they do.
 
@@ -53,7 +53,7 @@ This is the trigger condition the site owner set: once the first few videos are 
 ## 4. Gotchas (carried forward, still true)
 
 1. **kramdown does not parse markdown inside HTML blocks.** `parse_block_html: false` is the default. Text inside `<section>` or `<div>` needs real `<p>`/`<em>` tags, not `*markdown*` syntax.
-2. **`url` in `_config.yml` must not include `baseurl`.** `url: "https://dbest180.github.io"` + `baseurl: "/dbestinlove"`. Doubling the path breaks every canonical tag and share preview. This was live once.
+2. **`url` in `_config.yml` must not include `baseurl`.** `url: "https://dbestinlove.github.io"` + `baseurl: "/dbestinlove"`. Doubling the path breaks every canonical tag and share preview. This was live once.
 3. **Never add an `index.html`.** GitHub Pages serves it before `index.md`, silently hiding the whole site. This was the original v1 bug.
 4. **Check `git status -sb` before pushing.** `main` has diverged before. `git reset --soft origin/main` then commit is the safe recovery — never `git push --force`.
 5. **The agent environment has Ruby, Jekyll, a headless browser, ImageMagick, and now *vision*.** Build and preview with the repo's own documented commands (`bundle install`, then `bundle exec jekyll serve --baseurl ""`) — both work with no env vars or workarounds. It can also measure or screenshot the deployed page at any width and *see* the result through the `vision-skills` toolkit. Full setup and the rebuild recipe are in `DEEPSEEK_REQUIREMENTS.md`. Visual judgement no longer has to route through a human — but for pixel-exact facts (colours, offsets, small diffs) use `vision_dominant_colors` / `vision_trace` / `vision_pixel_diff`, never a model's prose description.

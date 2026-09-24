@@ -76,7 +76,7 @@ Measure the deployed page at any width:
 
 ```bash
 cd .tools/pw
-node shot.js "https://dbest180.github.io/dbestinlove/" "$PWD/../shots"
+node shot.js "https://dbestinlove.github.io/dbestinlove/" "$PWD/../shots"
 ```
 
 ### Gotcha: leaked environment variables survive policy changes
