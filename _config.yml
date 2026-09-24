@@ -32,3 +32,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - .github/
+  # Local drafts are git-ignored, but Jekyll would still build them into
+  # _site/ during `jekyll serve` and serve them at /drafts/. Excluded so a
+  # local preview can never expose them. They are never deployed regardless.
+  - drafts/
