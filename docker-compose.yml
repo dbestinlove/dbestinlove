@@ -6,9 +6,14 @@
 services:
   jekyll:
     image: jekyll/jekyll:pages
+    # JEKYLL_ENV=development + --drafts renders draft:true episodes so the
+    # Stage 2 chronology can be exercised locally. Production builds never
+    # set these, so drafts can not leak to Pages.
+    environment:
+      JEKYLL_ENV: development
     command: >
       bash -lc "bundle install && bundle exec jekyll serve
-      --host 0.0.0.0 --port 4000 --baseurl '' --livereload --trace"
+      --host 0.0.0.0 --port 4000 --baseurl '' --drafts --livereload --trace"
     volumes:
       - .:/srv/jekyll
       - jekyll-gems:/usr/local/bundle

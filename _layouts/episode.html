@@ -1,0 +1,28 @@
+---
+layout: default
+---
+{%- assign ch = site.data.chapters | where: "id", page.chapter | first -%}
+<section class="episode section reveal">
+  <p class="kicker">{% if ch %}{{ ch.label }}{% if ch.years %} · {{ ch.years }}{% endif %}{% endif %}</p>
+  <h1 class="episode__title">{{ page.title }}</h1>
+  {%- if page.duration %}
+  <p class="episode__meta">{{ page.duration }} · Episode {{ page.episode }}</p>
+  {%- else %}
+  <p class="episode__meta">Episode {{ page.episode }}</p>
+  {%- endif %}
+
+  <div class="episode__summary">
+    {{ content }}
+  </div>
+
+  <a class="btn btn--primary" href="{{ page.tiktok_url }}" target="_blank" rel="noopener">
+    <span class="btn__icon">{% include icon.html name="tiktok" %}</span>
+    <span class="btn__text">
+      <strong>Watch on TikTok</strong>
+      <small>{{ site.data.site.tiktok.handle }}</small>
+    </span>
+    <span class="btn__arrow" aria-hidden="true">→</span>
+  </a>
+
+  <p class="episode__back"><a class="text-link" href="{{ '/#story' | relative_url }}">← Back to the whole story</a></p>
+</section>

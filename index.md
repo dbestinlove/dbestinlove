@@ -46,23 +46,28 @@ layout: default
   {% endfor %}
 </nav>
 
-<section class="story section reveal">
+<section class="story section reveal" id="story">
   <h2 class="section-title">Our Story</h2>
 
-  <p>It started the way the best things do — by accident. A comment, a reply
-  nobody was supposed to answer, and then two people in two different time zones
-  talking at hours that made no sense to anyone but them.</p>
-
-  <p>What came next was mostly distance. Ten years of it. Three countries. Three
-  years where the world stayed home and we stayed apart — not because we had to,
-  but because we had already agreed on something better.</p>
-
-  <p>We said it to each other the way you say a vow long before you know that is
-  what it is: <em>not yet, but not never.</em></p>
-
-  <p>Somewhere in all that waiting, we stopped being each other's plus one and
-  became each other's home. Two flags. One story. And a wedding at the end of
-  the longest long distance either of us had ever run.</p>
+  {%- assign published = site.episodes | where: "draft", false -%}
+  {%- if published.size == 0 -%}
+  {%- comment -%}
+    Stage 2 degradation path (REDESIGN_PLAN): zero published episodes -> the
+    prose story renders from _data/chapters.yml blurbs. Same words as before,
+    now owned by data instead of HTML. When episode #1 is un-drafted, Stage 4's
+    full chronology loop replaces this block.
+  {%- endcomment -%}
+  {%- for ch in site.data.chapters %}
+  <p>{{ ch.blurb }}</p>
+  {%- endfor -%}
+  {%- else -%}
+  {%- comment %}Stage 4 renders the full chapter × episode chronology here.
+  The featured pin below already works from Stage 2 data.{% endcomment -%}
+  {%- assign feat = published | where: "featured", true | first -%}
+  {%- if feat %}
+  <p><a class="text-link" href="{{ feat.url | relative_url }}">Begin with Episode {{ feat.episode }}: {{ feat.title }} →</a></p>
+  {%- endif -%}
+  {%- endif -%}
 
   <p><a class="text-link" href="{{ site.data.site.tiktok.url }}" target="_blank" rel="noopener">Watch the full story on TikTok →</a></p>
 </section>

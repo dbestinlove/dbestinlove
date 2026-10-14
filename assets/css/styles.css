@@ -317,3 +317,31 @@ a:hover { color: var(--tt-red); }
   .js .reveal { opacity: 1; transform: none; }
   * { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Episode watch pages (Stage 2) ---------- */
+.episode__title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0.5rem 0 0.35rem;
+}
+.episode__meta {
+  font-family: var(--ui);
+  font-size: 0.78rem;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 1.75rem;
+}
+.episode__summary p {
+  font-family: var(--display);
+  color: var(--ink-soft);
+  margin: 0 0 1.35rem;
+  font-size: clamp(1.06rem, 3vw, 1.22rem);
+  line-height: 1.85;
+}
+.episode .btn { margin-top: 0.5rem; }
+.episode__back { margin-top: 2rem; }

@@ -77,6 +77,20 @@ there as `draft: true` — invisible in production, so the structure can be
 built and exercised without any dead-link risk. Owner-provided titles/dates
 populate the drafts as they arrive.
 
+### ADR-010 — YAML duplicate keys are silent data-loss bugs
+Stage 2 nearly shipped a second top-level `defaults:` key in `_config.yml`;
+PyYAML keeps only the last one and Jekyll behaves the same, so the site-wide
+`image:` default would have vanished with no error — the exact og:image class
+of bug as ADR-005. All front-matter-default scopes live in ONE `defaults:`
+list. Guardrails parse configs with a duplicate-key detector before anything
+else runs.
+
+### ADR-011 — Episode pages carry no `<footer>`; layout owns chrome
+`index.md` embeds its footer inline (historical), but collection pages get
+page furniture from `_layouts/default.html` only. Duplicating the footer in
+`episode.html` produced two footers per watch page on first render. CI rule
+R-single-footer pins the contract.
+
 ## Site integrity (invariants, inherited)
 
 - **Never add `index.html`** — Pages serves it before `index.md` and hides the

@@ -4,6 +4,8 @@ description: >-
   A 10-year long-distance (LDR) journey. We met in a comment section nobody
   remembers, and spent ten years, three countries, and three years of a pandemic
   apart — this is our love story.
+# og:description source above. Story prose lives ONLY in _data/chapters.yml;
+# the first sentence of `description` intentionally echoes chapter 1 (ADR-009).
 author: DBest In Love
 tiktok: https://www.tiktok.com/@dbestinlove
 
@@ -18,22 +20,33 @@ plugins:
 # The social share image. jekyll-seo-tag reads the image from the PAGE, not
 # from a top-level site key — a bare `image:` here does nothing and silently
 # emits no og:image (twitter:card falls back to "summary"). Front-matter
-# defaults are the only way to set it once for every page. See HANDOFF gotcha 6.
+# defaults are the only way to set it once for every page. See ADR-005.
+# NOTE: one `defaults:` key only — duplicate YAML keys silently drop earlier
+# entries. Episode layout + per-scope image fallbacks live in this list.
 defaults:
   - scope:
       path: ""
     values:
       image: /assets/img/og.jpg
+  - scope:
+      path: "_episodes"
+    values:
+      layout: episode
 
-# Collections. `_episodes` is the Stage 2 content model (one file per video);
-# it is empty on purpose at Stage 1 — see `_episodes/README.md`.
+# Collections. `_episodes` is the Stage 2 content model (one file per video).
+# Seed episodes ship with `draft: true`, so production emits ZERO watch pages;
+# drafts are only rendered when JEKYLL_ENV=development + --drafts (docker
+# compose serves them automatically). See _episodes/README.md.
 collections:
   episodes:
     output: true
-    permalink: /watch/:path/
+    permalink: /watch/:title/
 
 exclude:
   - README.md
+  # Collection docs are repo documentation, not site pages (no front matter —
+  # Jekyll would otherwise emit them raw into _site/).
+  - _episodes/README.md
   - REDESIGN_PLAN.md
   - docs/
   - .devcontainer/

@@ -11,8 +11,11 @@ open http://localhost:4000   # --baseurl '' is baked into the compose command
 ```
 
 The image (`jekyll/jekyll:pages`) carries the **same github-pages gem set as
-production** (Jekyll 3.10.0, jekyll-seo-tag 2.8.0), so what you see is what
-deploys. Regenerate `Gemfile.lock` inside the same image after any `Gemfile`
+production** (Jekyll 3.10.0, jekyll-seo-tag 2.8.0). The compose service also
+sets `JEKYLL_ENV=development` and passes `--drafts`, so draft episodes in
+`_episodes/` render locally — production builds never do, so drafts can not
+leak to Pages. One deliberate difference from prod exists *because* of this:
+you see the chronology/draft paths that deploys hide. Regenerate `Gemfile.lock` inside the same image after any `Gemfile`
 change, then commit it (ADR-001):
 
 ```bash
@@ -43,7 +46,7 @@ immediately when it does.
 
 | Task | Do this | Never do this |
 |---|---|---|
-| Add a video | Create `_episodes/<slug>.md` (Stage 2 template) | hand-edit story HTML |
+| Add a video | Copy `_episodes/_template.md.txt` → `_episodes/<slug>.md`, fill front matter, flip `draft: false` when the URL is live | hand-edit story HTML; un-draft without a real `tiktok_url` (CI R-ep-url fails it) |
 | Add a channel (once real) | Add URL/handle to `_data/site.yml`, entry in `_data/links.yml` referencing it | hardcode URLs in `index.md`; restore "Soon" placeholders (ADR-008) |
 | Swap photos | Overwrite `assets/img/{hero-1400,hero-700,og}.jpg` at identical dimensions, `convert -strip -interlace Plane -resize <W>x -quality 78`, update `alt` text | rename files (ADR-007) |
 | Change copy | Edit `index.md`; remember ADR-004 (real `<p>` tags inside HTML blocks) | expect `*markdown*` to render inside `<section>` |
