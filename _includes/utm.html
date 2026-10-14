@@ -1,0 +1,8 @@
+{%- comment -%}
+Stage 5 — slot-level attribution. Every outbound link to a channel carries
+UTM params so "which section sends the taps?" is answerable from TikTok's own
+analytics (no cookies, no analytics script — Stage 8 reads these server-side).
+Usage: {%- include utm.html base=site.data.site.tiktok.url slot="hero-cta" -%}
+Campaign name is constant ("story-hub"); `slot` identifies the surface.
+{%- endcomment -%}
+{{ include.base }}?utm_source=web&utm_medium=hub&utm_campaign=story-hub&utm_content={{ include.slot }}

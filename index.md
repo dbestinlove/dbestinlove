@@ -27,8 +27,8 @@ layout: default
   {% for link in site.data.links %}
     {% if link.url %}
     <a class="btn btn--{{ link.style }}"
-       href="{{ link.url }}"
-       {% if link.external %}target="_blank" rel="noopener"{% endif %}>
+       href="{% include utm.html base=link.url slot='nav' %}"
+       {% if link.external %}target="_blank" rel="noopener me"{% endif %}>
     {% else %}
     <div class="btn btn--{{ link.style }}">
     {% endif %}
@@ -49,31 +49,21 @@ layout: default
 <section class="story section reveal" id="story">
   <h2 class="section-title">Our Story</h2>
 
-  {%- assign published = site.episodes | where: "draft", false -%}
-  {%- if published.size == 0 -%}
   {%- comment -%}
-    Stage 2 degradation path (REDESIGN_PLAN): zero published episodes -> the
-    prose story renders from _data/chapters.yml blurbs. Same words as before,
-    now owned by data instead of HTML. When episode #1 is un-drafted, Stage 4's
-    full chronology loop replaces this block.
+  Stage 4 (REDESIGN_PLAN): the story spine renders from data — chapters from
+  _data/chapters.yml, episodes from _episodes/. The chronology loop lives in
+  _includes/story.html and feature-flags itself: zero published episodes ->
+  prose-only chapters with "Filming now" placeholders; episode #1 un-drafted ->
+  full chapter × episode list + "Start here" pin. No template edit is ever
+  required to populate it (ADR-009).
   {%- endcomment -%}
-  {%- for ch in site.data.chapters %}
-  <p>{{ ch.blurb }}</p>
-  {%- endfor -%}
-  {%- else -%}
-  {%- comment %}Stage 4 renders the full chapter × episode chronology here.
-  The featured pin below already works from Stage 2 data.{% endcomment -%}
-  {%- assign feat = published | where: "featured", true | first -%}
-  {%- if feat %}
-  <p><a class="text-link" href="{{ feat.url | relative_url }}">Begin with Episode {{ feat.episode }}: {{ feat.title }} →</a></p>
-  {%- endif -%}
-  {%- endif -%}
+  {% include story.html %}
 
-  <p><a class="text-link" href="{{ site.data.site.tiktok.url }}" target="_blank" rel="noopener">Watch the full story on TikTok →</a></p>
+  <p><a class="text-link" href="{% include utm.html base=site.data.site.tiktok.url slot='story-footer' %}" target="_blank" rel="noopener me">Watch the full story on TikTok →</a></p>
 </section>
 
 <footer class="footer">
-  <p><a href="{{ site.data.site.tiktok.url }}" target="_blank" rel="noopener">{{ site.data.site.tiktok.handle }}</a></p>
+  <p><a href="{% include utm.html base=site.data.site.tiktok.url slot='footer' %}" target="_blank" rel="noopener me">{{ site.data.site.tiktok.handle }}</a></p>
   <p>© {{ site.time | date: "%Y" }} DBest In Love</p>
   <p>Two flags, one story.</p>
 </footer>

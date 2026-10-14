@@ -2,6 +2,18 @@
 layout: default
 ---
 {%- assign ch = site.data.chapters | where: "id", page.chapter | first -%}
+{%- comment -%}
+Stage 5: per-episode share card. jekyll-seo-tag reads `page.image` (ADR-005);
+an episode's optional `og_image:` front matter wins, else fall back to the
+site-wide og.jpg via this scoped capture. Card description = episode summary +
+chapter label, generated automatically — zero template work per upload.
+(Verified on Jekyll 3.10: layout-front-matter assignments merge into `page`,
+so seo-tag sees these values.)
+{%- endcomment -%}
+{%- capture ogimage -%}{% if page.og_image %}{{ page.og_image }}{% else %}/assets/img/og.jpg{% endif %}{%- endcapture -%}
+{%- assign image = ogimage -%}
+{%- capture carddesc -%}Episode {{ page.episode }} of our story — {{ page.summary | strip_newlines }}{% if ch %} ({{ ch.label }}){% endif %}{%- endcapture -%}
+{%- assign description = carddesc -%}
 <section class="episode section reveal">
   <p class="kicker">{% if ch %}{{ ch.label }}{% if ch.years %} · {{ ch.years }}{% endif %}{% endif %}</p>
   <h1 class="episode__title">{{ page.title }}</h1>
@@ -15,7 +27,8 @@ layout: default
     {{ content }}
   </div>
 
-  <a class="btn btn--primary" href="{{ page.tiktok_url }}" target="_blank" rel="noopener">
+  {%- if page.tiktok_url %}
+  <a class="btn btn--primary" href="{% include utm.html base=page.tiktok_url slot='watch' %}" target="_blank" rel="noopener me">
     <span class="btn__icon">{% include icon.html name="tiktok" %}</span>
     <span class="btn__text">
       <strong>Watch on TikTok</strong>
@@ -23,6 +36,35 @@ layout: default
     </span>
     <span class="btn__arrow" aria-hidden="true">→</span>
   </a>
+  {%- else %}
+  <p class="chapter__soon">Filming now — this episode hasn't posted yet.</p>
+  {%- endif %}
 
   <p class="episode__back"><a class="text-link" href="{{ '/#story' | relative_url }}">← Back to the whole story</a></p>
 </section>
+
+{%- comment -%}
+Stage 7: VideoObject structured data, built from episode front matter only.
+uploadDate comes from `posted` (guardrail R-ep-posted guarantees it once a
+video is published). duration is stored as mm:ss in front matter, converted to
+ISO-8601 PT..S here.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": {{ page.title | jsonify }},
+  "description": {{ page.summary | strip_newlines | jsonify }},
+  "thumbnailUrl": [{% if page.og_image %}"{{ site.url }}{{ site.baseurl }}{{ page.og_image }}"{% else %}"{{ site.url }}{{ site.baseurl }}/assets/img/og.jpg"{% endif %}],
+  {% if page.video_id %}"identifier": {{ page.video_id | jsonify }},{% endif %}
+  {% if page.tiktok_url %}"contentUrl": {{ page.tiktok_url | jsonify }},
+  "sameAs": {{ page.tiktok_url | jsonify }},{% endif %}
+  "uploadDate": "{{ page.posted | default: site.time | date: '%Y-%m-%d' }}",
+  {% if page.duration %}"duration": "PT{{ page.duration | replace: ':', 'M' }}S",{% endif %}
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ site.title | jsonify }},
+    "url": "{{ site.url }}{{ site.baseurl }}/"
+  }
+}
+</script>

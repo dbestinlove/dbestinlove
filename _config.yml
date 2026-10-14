@@ -14,8 +14,11 @@ url: "https://dbestinlove.github.io"
 baseurl: "/dbestinlove"
 
 markdown: kramdown
+# jekyll-sitemap (Stage 7): emits /sitemap.xml with lastmod from each page's
+# git-free `date` fallback + episode pages. Referenced from robots.txt.
 plugins:
   - jekyll-seo-tag
+  - jekyll-sitemap
 
 # The social share image. jekyll-seo-tag reads the image from the PAGE, not
 # from a top-level site key — a bare `image:` here does nothing and silently

@@ -1,0 +1,64 @@
+{%- comment -%}
+Stage 4 — the story spine, rendered from data. One include used by BOTH
+branches of index.md's feature flag:
+  * zero published episodes -> prose-only chapters (blurb + "Filming now")
+  * one or more             -> chapter × episode chronology + featured pin
+Episodes come from _episodes/ (drafts are invisible in production builds),
+chapters/labels/prose from _data/chapters.yml. Voice rules: docs/DECISIONS.md.
+All outbound links carry UTM slots (Stage 5) via _includes/utm.html.
+{%- endcomment -%}
+{%- assign published = site.episodes | where_exp: "e", "e.draft == false" -%}
+{%- if published.size > 0 -%}
+  {%- assign feat = published | where: "featured", true | first -%}
+  <div class="pin">
+    <span class="pin__label">Start here</span>
+    <a class="pin__link" href="{{ feat.url | relative_url }}">Begin with Episode {{ feat.episode }}: {{ feat.title }}</a>
+    <p class="pin__note">{{ feat.summary }}</p>
+  </div>
+{%- endif -%}
+{%- for ch in site.data.chapters -%}
+  {%- comment -%}
+  Sort by episode number WITHOUT the `sort:` filter: Jekyll 3.10's `where`
+  returns a plain Array and its `sort` drops non-comparable items, which broke
+  ordering when sibling episodes lacked `episode:` (verified live). A for/loop
+  + explicit min-scan is version-proof.
+  {%- endcomment -%}
+  {%- assign eps_raw = published | where: "chapter", ch.id -%}
+  {%- assign ordered = "" | split: "" -%}
+  {%- assign pool = eps_raw -%}
+  {%- for i in (1..20) -%}
+    {%- if pool.size == 0 -%}{%- break -%}{%- endif -%}
+    {%- assign lo = nil -%}
+    {%- assign best = nil -%}
+    {%- for e in pool -%}
+      {%- assign n = e.episode | plus: 0 -%}
+      {%- if lo == nil or n < lo -%}
+        {%- assign lo = n -%}
+        {%- assign best = e -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- assign ordered = ordered | push: best -%}
+    {%- assign pool = pool | where_exp: "e", "e != best" -%}
+  {%- endfor -%}
+  <article class="chapter">
+    <h3 class="chapter__head">
+      <span class="chapter__label">{{ ch.label }}</span>
+      {%- if ch.years %}<span class="chapter__years">{{ ch.years }}</span>{% endif -%}
+    </h3>
+    <p>{{ ch.blurb }}</p>
+    {%- if ordered.size > 0 %}
+    <ul class="chapter__eps">
+      {%- for e in ordered %}
+      <li>
+        <a class="chapter__ep-link" href="{{ e.url | relative_url }}">Episode {{ e.episode }} — {{ e.title }}</a>
+        {%- if e.tiktok_url %}
+        <a class="chapter__ep-watch" href="{% include utm.html base=e.tiktok_url slot='story' %}" target="_blank" rel="noopener me">Watch on TikTok →</a>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+    {%- else %}
+    <p class="chapter__soon">Filming now</p>
+    {%- endif %}
+  </article>
+{%- endfor -%}
