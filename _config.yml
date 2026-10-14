@@ -25,11 +25,20 @@ defaults:
     values:
       image: /assets/img/og.jpg
 
+# Collections. `_episodes` is the Stage 2 content model (one file per video);
+# it is empty on purpose at Stage 1 — see `_episodes/README.md`.
+collections:
+  episodes:
+    output: true
+    permalink: /watch/:path/
+
 exclude:
   - README.md
-  - HANDOFF.md
-  - DEEPSEEK_REQUIREMENTS.md
   - REDESIGN_PLAN.md
+  - docs/
+  - .devcontainer/
+  - docker-compose.yml
+  - scripts/
   - Gemfile
   - Gemfile.lock
   - .github/

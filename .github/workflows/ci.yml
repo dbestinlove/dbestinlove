@@ -1,0 +1,24 @@
+name: Guardrails
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: House-rule guardrails
+        run: python scripts/check.py
+      - name: Build with the production toolchain (jekyll/jekyll:pages)
+        # Same github-pages gem set Actions' jekyll-build-pages uses, so a green
+        # CI build is a faithful preview of the deploy.
+        run: |
+          docker run --rm -v "$PWD:/srv/jekyll" -w /srv/jekyll \
+            jekyll/jekyll:pages bash -lc "bundle install && bundle exec jekyll build --baseurl ''"

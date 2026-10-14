@@ -1,11 +1,18 @@
-_site/
-.jekyll-cache/
 .sass-cache/
-Gemfile.lock
-.dsh-vision-toolkit/
-.tools/
-
-# Working drafts. Local only, on purpose: this repo is public, and raw
-# scripts contain the source facts (dates, cities, ages) that must never
-# ship. See drafts/PRIVACY.md. Never `git add -f` anything in here.
-drafts/
+.jekyll-cache/
+.jekyll-metadata
+_site/
+.env
+.env.local
+.env.*.local
+*.log
+logs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+dist/
+build/

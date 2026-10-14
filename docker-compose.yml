@@ -1,0 +1,19 @@
+# Local preview matching production's toolchain (github-pages gem, Jekyll 3.10).
+# This replaces the old rootless-Ruby-in-.tools saga entirely: no system Ruby,
+# no sudo, no rebuild recipe needed on a fresh clone. Requires Docker.
+#
+#   docker compose up          # then open http://localhost:4000
+services:
+  jekyll:
+    image: jekyll/jekyll:pages
+    command: >
+      bash -lc "bundle install && bundle exec jekyll serve
+      --host 0.0.0.0 --port 4000 --baseurl '' --livereload --trace"
+    volumes:
+      - .:/srv/jekyll
+      - jekyll-gems:/usr/local/bundle
+    ports:
+      - "4000:4000"
+
+volumes:
+  jekyll-gems:

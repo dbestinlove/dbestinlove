@@ -1,0 +1,9 @@
+# Single source of truth for social handles and channel URLs.
+# Stage 2 (_episodes collection) consumes this file; Stage 1 introduces it with
+# the one channel that actually exists. Do NOT add Instagram/YouTube entries
+# until those accounts are real — "delete-until-real" is a deliberate policy
+# (see docs/DECISIONS.md ADR-008), not an oversight.
+tiktok:
+  handle: "@dbestinlove"
+  url: https://www.tiktok.com/@dbestinlove
+  blurb: new videos weekly

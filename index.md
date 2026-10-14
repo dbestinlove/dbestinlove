@@ -64,11 +64,11 @@ layout: default
   became each other's home. Two flags. One story. And a wedding at the end of
   the longest long distance either of us had ever run.</p>
 
-  <p><a class="text-link" href="https://www.tiktok.com/@dbestinlove" target="_blank" rel="noopener">Watch the full story on TikTok →</a></p>
+  <p><a class="text-link" href="{{ site.data.site.tiktok.url }}" target="_blank" rel="noopener">Watch the full story on TikTok →</a></p>
 </section>
 
 <footer class="footer">
-  <p><a href="https://www.tiktok.com/@dbestinlove" target="_blank" rel="noopener">TikTok</a></p>
+  <p><a href="{{ site.data.site.tiktok.url }}" target="_blank" rel="noopener">{{ site.data.site.tiktok.handle }}</a></p>
   <p>© {{ site.time | date: "%Y" }} DBest In Love</p>
   <p>Two flags, one story.</p>
 </footer>
