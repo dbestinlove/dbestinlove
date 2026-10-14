@@ -29,6 +29,7 @@ exclude:
   - README.md
   - HANDOFF.md
   - DEEPSEEK_REQUIREMENTS.md
+  - REDESIGN_PLAN.md
   - Gemfile
   - Gemfile.lock
   - .github/
