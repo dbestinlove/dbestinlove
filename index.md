@@ -27,8 +27,8 @@ layout: default
   {% for link in site.data.links %}
     {% if link.url %}
     <a class="btn btn--{{ link.style }}"
-       href="{{ link.url }}"
-       {% if link.external %}target="_blank" rel="noopener"{% endif %}>
+       href="{% include utm.html base=link.url slot='nav' %}"
+       {% if link.external %}target="_blank" rel="noopener me"{% endif %}>
     {% else %}
     <div class="btn btn--{{ link.style }}">
     {% endif %}
@@ -46,29 +46,24 @@ layout: default
   {% endfor %}
 </nav>
 
-<section class="story section reveal">
+<section class="story section reveal" id="story">
   <h2 class="section-title">Our Story</h2>
 
-  <p>It started the way the best things do — by accident. A comment, a reply
-  nobody was supposed to answer, and then two people in two different time zones
-  talking at hours that made no sense to anyone but them.</p>
+  {%- comment -%}
+  Stage 4 (REDESIGN_PLAN): the story spine renders from data — chapters from
+  _data/chapters.yml, episodes from _episodes/. The chronology loop lives in
+  _includes/story.html and feature-flags itself: zero published episodes ->
+  prose-only chapters with "Filming now" placeholders; episode #1 un-drafted ->
+  full chapter × episode list + "Start here" pin. No template edit is ever
+  required to populate it (ADR-009).
+  {%- endcomment -%}
+  {% include story.html %}
 
-  <p>What came next was mostly distance. Ten years of it. Three countries. Three
-  years where the world stayed home and we stayed apart — not because we had to,
-  but because we had already agreed on something better.</p>
-
-  <p>We said it to each other the way you say a vow long before you know that is
-  what it is: <em>not yet, but not never.</em></p>
-
-  <p>Somewhere in all that waiting, we stopped being each other's plus one and
-  became each other's home. Two flags. One story. And a wedding at the end of
-  the longest long distance either of us had ever run.</p>
-
-  <p><a class="text-link" href="https://www.tiktok.com/@dbestinlove" target="_blank" rel="noopener">Watch the full story on TikTok →</a></p>
+  <p><a class="text-link" href="{% include utm.html base=site.data.site.tiktok.url slot='story-footer' %}" target="_blank" rel="noopener me">Watch the full story on TikTok →</a></p>
 </section>
 
 <footer class="footer">
-  <p><a href="https://www.tiktok.com/@dbestinlove" target="_blank" rel="noopener">TikTok</a></p>
+  <p><a href="{% include utm.html base=site.data.site.tiktok.url slot='footer' %}" target="_blank" rel="noopener me">{{ site.data.site.tiktok.handle }}</a></p>
   <p>© {{ site.time | date: "%Y" }} DBest In Love</p>
   <p>Two flags, one story.</p>
 </footer>

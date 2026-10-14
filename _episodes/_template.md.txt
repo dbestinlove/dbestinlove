@@ -1,0 +1,17 @@
+---
+# Copy this file to `_episodes/<slug>.md` for each video. Slug = short kebab-case.
+title: Working title of the episode
+episode: 1                 # integer, position in the series
+video_id: ""               # TikTok id, e.g. "7412345678901234567" (empty until posted)
+tiktok_url: ""             # full URL, empty until posted — guardrail R-ep-url fails it if published empty
+posted:                    # YYYY-MM-DD, the day it went live (leave unset while draft)
+chapter: meeting           # must exist in _data/chapters.yml (guardrail R-chapter)
+duration: ""               # optional, e.g. "1:34"
+featured: false            # exactly one episode may be true (guardrail R-feature)
+og_image:                  # optional; omit to fall back to site-wide og.jpg (ADR-005)
+draft: true                # set false ONLY when the video is actually posted
+summary: >-
+  One or two sentences shown on the watch page and used for share-card copy.
+---
+The body is the long-form summary — plain prose, first-person plural, no
+marketing register. It renders on `/watch/<slug>/`. Delete this guidance text.

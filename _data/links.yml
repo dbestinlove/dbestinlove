@@ -1,5 +1,13 @@
+# Link buttons for the nav on the homepage. `url:` set = live link; no `url:`
+# = dashed "Soon" placeholder. Channel URLs/handles live in `_data/site.yml`
+# — reference them here, never restate them (single source of truth).
 - label: Watch on TikTok
-  sub: "@dbestinlove — new videos weekly"
+  sub: "{{ site.data.site.tiktok.handle }} — {{ site.data.site.tiktok.blurb }}"
+  # Literal URL, deliberately. index.md pipes this through the UTM include
+  # (Stage 5), and Jekyll 3.10 cannot resolve Liquid stored in data files —
+  # a `{{ ... }}` here would be emitted verbatim into the href. _data/site.yml
+  # remains the human-editable master; guardrail R8-mirror fails the build if
+  # this literal ever drifts from it.
   url: https://www.tiktok.com/@dbestinlove
   icon: tiktok
   style: primary

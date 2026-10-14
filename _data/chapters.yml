@@ -1,0 +1,39 @@
+# Story spine — Stage 2 of REDESIGN_PLAN.md. Ordered; episodes attach by `id`.
+# Voice constraint (docs/DECISIONS.md): first-person plural, EB Garamond prose,
+# no marketing register. Blurbs live HERE, never in templates.
+- id: meeting
+  label: The comment section
+  years: "2015"
+  blurb: >-
+    It started the way the best things do — by accident. A comment, a reply
+    nobody was supposed to answer, and then two people in two different time
+    zones talking at hours that made no sense to anyone but them.
+
+- id: distance
+  label: Ten years, three countries
+  years: "2016–2019"
+  blurb: >-
+    What came next was mostly distance. Ten years of it. Three countries.
+    Time zones we learned to live inside instead of around.
+
+- id: pandemic
+  label: The world stayed home
+  years: "2020–2022"
+  blurb: >-
+    Three years where the world stayed home and we stayed apart — not because
+    we had to, but because we had already agreed on something better.
+
+- id: vow
+  label: Not yet, but not never
+  years: "the waiting years"
+  blurb: >-
+    We said it to each other the way you say a vow long before you know that
+    is what it is: not yet, but not never.
+
+- id: closing
+  label: Closing the distance
+  years: "now"
+  blurb: >-
+    Somewhere in all that waiting, we stopped being each other's plus one and
+    became each other's home. Two flags. One story. And a wedding at the end
+    of the longest long distance either of us had ever run.
